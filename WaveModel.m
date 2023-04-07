@@ -1,11 +1,12 @@
-clear; close all; 
+clear; close all; clc
 
 %% Set up parameters
 
-N = 100; % Number of people in a row
+N = 10; % Number of people in a row
 p = 4; % Number of people down the row that can influence
-T = 0.1; % Threshold to make person stand up
-rows = 5;
+thresh = 0.99; % Threshold to make person stand up
+rows = 3;
+tmax = 10;
 
 %% Set up Transition matrix T
 A = zeros(N);
@@ -45,25 +46,33 @@ T = sparse(T);
 M = zeros(rows,N);
 % add perturbation
 
-M(3, 1:3) = 1;
+M(2, 1:2) = 1;
+% M(3, 1:4) = 1;
+% M(4, 1:4) = 1;
 
 % transform matrix into a single column vector
 x = reshape(M', 1, [])';
 
+RES = zeros(rows, N, tmax);
+RES(:,:,1) = M;
 
-% evolve matrix
+%% evolve matrix
 
-% start = zeros(1,N);
-% start(1:4) = 1;
-% 
-% for iter = 1:4
-%     result = A * transpose(start);
-%     result(result < T) = 0;
-%     result(result >= T) = 1;
-%     result
-%     start = transpose(result);
-% 
-% end
+
+
+for iter = 2:tmax
+    reshape(x, N, [])'
+    result = T*x;
+    result(result < thresh) = 0;
+    result(result >= thresh) = 1;
+    RES(:,:,iter) = reshape(result, N, [])';
+    x = result - x;
+    x(x < 0) = 0;
+end
+
+%%
+
+
 
 % to save file, run command: 
-% save [filename] N rows x -v7.3
+save test_run.mat N rows tmax RES -v7.3
