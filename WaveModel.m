@@ -2,11 +2,11 @@ clear; close all; clc
 
 %% Set up parameters
 
-N = 10; % Number of people in a row
+N = 500; % Number of people in a row
 p = 4; % Number of people down the row that can influence
 thresh = 0.99; % Threshold to make person stand up
-rows = 3;
-tmax = 10;
+rows = 10;
+tmax = 400;
 
 %% Set up Transition matrix T
 A = zeros(N);
@@ -61,7 +61,6 @@ RES(:,:,1) = M;
 
 
 for iter = 2:tmax
-    reshape(x, N, [])'
     result = T*x;
     result(result < thresh) = 0;
     result(result >= thresh) = 1;
