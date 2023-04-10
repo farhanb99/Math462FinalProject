@@ -2,27 +2,31 @@ clear; close all; clc
 
 %% Set up parameters
 
-N = 500; % Number of people in a row
-p = 4; % Number of people down the row that can influence
-thresh = 0.99; % Threshold to make person stand up
-rows = 10;
-tmax = 400;
+N = 250; % Number of people in a row
+p = 5; % Number of people down the row that can influence
+thresh = 0.19; % Threshold to make person stand up
+rows = 50;
+tmax = 88;
+max_influence = 1;
+num_influence = p + 2*floor(7*p/8) + 2*floor(5*p/8);
+falloff = 0.5;
 
 %% Set up Transition matrix T
 A = zeros(N);
 B = zeros(N);
 C = zeros(N);
+
  
 weights_next = zeros(1,N);
-weights_next(N-p+1:N) = linspace(0, 1,p);
+weights_next(N-p+1:N) = linspace(max_influence*falloff, max_influence,p);
 A(1,1:N) = weights_next;
 
 weights_one_row_away = zeros(1,N);
-weights_one_row_away(N-p+1:N) = linspace(0, 2/3,p);
-B(1,1:N) = weights_one_row_away;
+weights_one_row_away(N-floor(7*p/8)+1:N) = linspace(max_influence*falloff,max_influence,floor(7*p/8));
+B(1,1:N) = weights_one_row_away;    
 
 weights_two_rows_away = zeros(1,N);
-weights_two_rows_away(N-p+2:N) = linspace(0, 1/3,p-1);
+weights_two_rows_away(N-floor(5*p/8)+1:N) = linspace(max_influence*falloff, max_influence,floor(5*p/8));
 C(1,1:N) = weights_two_rows_away;
 
 for i = 2:N
@@ -39,15 +43,15 @@ B_ext = kron(diag(ones(1,rows - 1),1),B) + kron(diag(ones(1,rows - 1),-1),B); % 
 C_ext = kron(diag(ones(1,rows - 2),2),C) + kron(diag(ones(1,rows - 2),-2),C); % Creates block matrix with C in the 2nd upper and lower diagonals
 
 T = A_ext + B_ext + C_ext;
-T = sparse(T);
+T = sparse(T) / num_influence;
 
 %% Initialize starting matrix
 
 M = zeros(rows,N);
 % add perturbation
 
-M(2, 1:2) = 1;
-% M(3, 1:4) = 1;
+%M(floor(rows/2) - 5:floor(rows/2)+5, 1:5) = 1;
+M(:, 1:4) = 1;
 % M(4, 1:4) = 1;
 
 % transform matrix into a single column vector
