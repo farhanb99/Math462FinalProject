@@ -54,7 +54,7 @@ if __name__ == '__main__':
         data = np.array(f.get('RES'))
 
     # Define a dictionary with quality levels and corresponding fps and dpi values
-    qual_dict = {'low':(10, 100), 'med':(30, 200), "high":(60, 300)}
+    qual_dict = {'low':(10, 100), 'med':(20, 200), "high":(60, 300)}
 
     # Retrieve fps and dpi values for the given quality level
     fps, dpi = qual_dict[quality]   
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     num_frames = duration * fps
 
     # Generate the X and Y coordinates for the scatterplot
-    radius = np.linspace(100, 150, num = rows)
+    radius = np.linspace(100, 200, num = rows)
     radius = radius.reshape(rows,1)
     theta = np.linspace(0, 2*np.pi, num = N, endpoint = False)
 
@@ -80,11 +80,13 @@ if __name__ == '__main__':
 
     # Create a new figure with specified size and dpi
     fig,ax = plt.subplots(figsize=(10,10), dpi = dpi)
+    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
+    fig.set_facecolor('#A4A4A4')
     ax.axis('off')
 
     # Generate initial blue and red plots
-    scatter1 = ax.scatter(X_all[:,:,0], Y_all[:,:,0], color = "blue")
-    scatter2 = ax.scatter(X_all[:,:,0], Y_all[:,:,0], color = "red")
+    scatter1 = ax.scatter(X_all[:,:,0], Y_all[:,:,0], color = '#00274C' ,s=15)
+    scatter2 = ax.scatter(X_all[:,:,0], Y_all[:,:,0], color = '#FFCB05',s=15)
 
     # Update function for animation
     def update(frame):
@@ -108,4 +110,4 @@ if __name__ == '__main__':
     anim = FuncAnimation(fig, update, frames=int(num_frames), interval=int(1000/fps))
 
     # Save animation object
-    anim.save(output_file, writer='ffmpeg')
+    anim.save(output_file, writer='ffmpeg',savefig_kwargs={"pad_inches":0})

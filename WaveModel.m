@@ -2,14 +2,14 @@ clear; close all; clc
 
 %% Set up parameters
 
-N = 250; % Number of people in a row
-p = 5; % Number of people down the row that can influence
-thresh = 0.19; % Threshold to make person stand up
-rows = 50;
-tmax = 88;
-max_influence = 1;
-num_influence = p + 2*floor(7*p/8) + 2*floor(5*p/8);
-falloff = 0.5;
+N = 250; % Number of people in a row 250
+p = 5; % Number of people down the row that can influence 5
+thresh = 0.21; % Threshold to make person stand up 0.22
+rows = 50; % 50
+tmax = 87; % 85
+max_influence = 1; % 1
+num_influence = p + 2*floor(7*p/8) + 2*floor(5*p/8); % p + 2*floor(7*p/8) + 2*floor(5*p/8)
+falloff = 0.5; % 0.5
 
 %% Set up Transition matrix T
 A = zeros(N);
@@ -50,8 +50,12 @@ T = sparse(T) / num_influence;
 M = zeros(rows,N);
 % add perturbation
 
-%M(floor(rows/2) - 5:floor(rows/2)+5, 1:5) = 1;
-M(:, 1:4) = 1;
+blockwidth = 10;
+blockheight = 0;
+
+
+M(floor(rows/2) - blockheight:floor(rows/2)+blockheight, 1:blockwidth) = 1;
+%M(:, 1:4) = 1;
 % M(4, 1:4) = 1;
 
 % transform matrix into a single column vector
